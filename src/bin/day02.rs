@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reports = std::io::stdin()
         .lines()
@@ -13,13 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let safe_reports = reports
         .iter()
-        .filter(|report| {
-            (report.iter().is_sorted() || report.iter().rev().is_sorted())
-                && std::iter::zip(report.iter(), &report[1..]).all(|(x, y)| {
-                    let diff = (*x - *y).abs();
-                    1 <= diff && diff <= 3
-                })
-        })
+        .filter(|report| is_report_safe(report))
         .count();
     println!("part one: {}", safe_reports);
 
@@ -27,22 +19,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .iter()
         .filter(|report| {
             (-1..report.len() as i32).any(|index| {
-                let mut report = report.iter().cloned().collect::<Vec<_>>();
+                let mut report = report.to_vec();
                 let report = if index >= 0 {
                     report.remove(index as usize);
                     report
                 } else {
                     report
                 };
-                (report.iter().is_sorted() || report.iter().rev().is_sorted())
-                    && std::iter::zip(report.iter(), &report[1..]).all(|(x, y)| {
-                        let diff = (*x - *y).abs();
-                        1 <= diff && diff <= 3
-                    })
+                is_report_safe(&report)
             })
         })
         .count();
     println!("part two: {}", safe_reports_with_dampener);
 
     Ok(())
+}
+
+fn is_report_safe(report: &[i32]) -> bool {
+    (report.iter().is_sorted() || report.iter().rev().is_sorted())
+        && std::iter::zip(report.iter(), &report[1..]).all(|(x, y)| {
+            let diff = (*x - *y).abs();
+            (1..=3).contains(&diff)
+        })
 }
