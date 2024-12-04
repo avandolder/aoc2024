@@ -24,7 +24,7 @@ fn search_for(
     (0..target.len() as i64)
         .map(|idx| (row + direction.0 * idx, col + direction.1 * idx))
         .filter(|(row, col)| *row >= 0 && *col >= 0)
-        .filter_map(|(row, col)| grid.get(row as usize).and_then(|row| row.get(col as usize)))
+        .filter_map(|(row, col)| grid.get(row as usize)?.get(col as usize))
         .collect::<String>()
         == target
 }
