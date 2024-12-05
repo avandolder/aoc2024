@@ -1,7 +1,7 @@
 use itertools::iproduct;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let input = aoc2024::read_input()?;
+    let input = aoc::read_input()?;
 
     let grid = input
         .lines()

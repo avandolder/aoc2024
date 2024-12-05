@@ -1,4 +1,4 @@
-use aoc2024::read_input;
+use aoc::read_input;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let input = read_input()?;
