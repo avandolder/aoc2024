@@ -1,25 +1,25 @@
 use aoc::read_input;
-use num::{bigint::BigUint, FromPrimitive};
+use num::bigint::BigUint;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let input = read_input()?;
 
-    let eqns = input
+    let eqns: Vec<(u64, Vec<u64>)> = input
         .lines()
         .map(|line| {
             let mut parts = line.split(":");
             (
-                parts.next().unwrap().parse::<u64>().unwrap(),
+                parts.next().unwrap().parse().unwrap(),
                 parts
                     .next()
                     .unwrap()
                     .split(" ")
                     .filter(|str| !str.is_empty())
-                    .map(|value| value.parse::<u64>().unwrap())
-                    .collect::<Vec<_>>(),
+                    .map(|value| value.parse().unwrap())
+                    .collect(),
             )
         })
-        .collect::<Vec<_>>();
+        .collect();
 
     println!("part one: {}", part_one(&eqns));
     println!("part two: {}", part_two(&eqns));
@@ -58,12 +58,7 @@ fn can_get_big(result: &BigUint, n: BigUint, values: &[u64]) -> bool {
 fn part_two(eqns: &[(u64, Vec<u64>)]) -> u64 {
     eqns.iter()
         .filter_map(|(result, values)| {
-            can_get_big(
-                &BigUint::from_u64(*result).unwrap(),
-                BigUint::from_u64(values[0]).unwrap(),
-                &values[1..],
-            )
-            .then_some(result)
+            can_get_big(&(*result).into(), values[0].into(), &values[1..]).then_some(result)
         })
         .sum()
 }
