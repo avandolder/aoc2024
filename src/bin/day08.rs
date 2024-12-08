@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use aoc::read_input;
 use itertools::Itertools;
@@ -8,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let map: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
     let (rows, cols) = (map.len() as i64, map[0].len() as i64);
 
-    let antennas: HashMap<char, Vec<(i64, i64)>> = map
+    let antennas: Vec<Vec<(i64, i64)>> = map
         .iter()
         .enumerate()
         .flat_map(|(i, row)| row.iter().enumerate().map(move |(j, c)| ((i, j), c)))
@@ -16,14 +16,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .sorted_by_key(|(_, c)| *c)
         .chunk_by(|(_, c)| *c)
         .into_iter()
-        .map(|(c, chunk)| {
-            (
-                *c,
-                chunk
-                    .into_iter()
-                    .map(|((i, j), _)| (i as i64, j as i64))
-                    .collect(),
-            )
+        .map(|(_, chunk)| {
+            chunk
+                .into_iter()
+                .map(|((i, j), _)| (i as i64, j as i64))
+                .collect()
         })
         .collect();
 
@@ -33,10 +30,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn part_one((rows, cols): (i64, i64), antennas: &HashMap<char, Vec<(i64, i64)>>) -> usize {
+fn part_one((rows, cols): (i64, i64), antennas: &[Vec<(i64, i64)>]) -> usize {
     let mut antinodes = HashSet::new();
 
-    for locs in antennas.values() {
+    for locs in antennas {
         for i in 0..locs.len() {
             for j in (i + 1)..locs.len() {
                 let (row1, col1) = locs[i];
@@ -55,10 +52,10 @@ fn part_one((rows, cols): (i64, i64), antennas: &HashMap<char, Vec<(i64, i64)>>)
         .count()
 }
 
-fn part_two((rows, cols): (i64, i64), antennas: &HashMap<char, Vec<(i64, i64)>>) -> usize {
+fn part_two((rows, cols): (i64, i64), antennas: &[Vec<(i64, i64)>]) -> usize {
     let mut antinodes = HashSet::new();
 
-    for locs in antennas.values() {
+    for locs in antennas {
         for i in 0..locs.len() {
             for j in (i + 1)..locs.len() {
                 let (row1, col1) = locs[i];
